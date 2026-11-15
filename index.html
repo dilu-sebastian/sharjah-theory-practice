@@ -96,6 +96,9 @@ th{color:var(--muted);font-weight:600}
 .rev .ans{font-size:.93rem}
 .qimg{display:block;max-width:100%;max-height:230px;width:auto;margin:4px auto 14px;background:#fff;border-radius:10px;padding:10px;border:1px solid var(--border)}
 .qimg.small{max-height:120px;margin:4px 0 10px}
+.qsvg{width:260px;max-width:100%;padding:10px;background:#fff}
+.qsvg svg{display:block;width:100%;height:auto;max-height:230px}
+.qsvg.small{width:150px}
 @media (max-width:520px){
   .big{font-size:2.1rem}
   .qtext{font-size:1.05rem}
@@ -112,6 +115,7 @@ th{color:var(--muted);font-weight:600}
   <div id="app"></div>
 </main>
 
+<script src="drawings.js"></script>
 <script src="question-images.js"></script>
 <script>
 /* ============================================================
@@ -297,7 +301,15 @@ const TEXT_BANK = [
 ];
 
 // All questions: text questions + picture questions (question-images.js)
-const BANK = TEXT_BANK.map(b => ({ t: b[0], q: b[1], o: b[2], a: b[3], e: b[4] })).concat(SHOW_PICTURES ? IMG_BANK : []);
+const BANK = TEXT_BANK.map(b => ({ t: b[0], q: b[1], o: b[2], a: b[3], e: b[4] })).concat(IMG_BANK.filter(q => q.svg || SHOW_PICTURES));
+
+// Picture for a question: handbook image (only when SHOW_PICTURES) or the original drawing
+function pictureHtml(q, small){
+  const cls = small ? 'qimg small' : 'qimg';
+  if (SHOW_PICTURES && q.img) return `<img class="${cls}" src="${q.img}" alt="Picture for this question">`;
+  if (q.svg) return `<div class="${cls} qsvg">${q.svg}</div>`;
+  return '';
+}
 
 /* ============================================================
    HELPERS
@@ -406,7 +418,7 @@ function startTest(){
   const qs = pool.slice(0, n).map(x => {
     let order = [0,1,2,3].slice(0, x.o.length);
     if (cfg.shuffle && !x.fixed) shuffleArr(order);
-    return { id: x.id, t: x.t, q: x.q, o: order.map(k => x.o[k]), a: order.indexOf(x.a), e: x.e, img: x.img || null };
+    return { id: x.id, t: x.t, q: x.q, o: order.map(k => x.o[k]), a: order.indexOf(x.a), e: x.e, img: x.img || null, svg: x.svg || null };
   });
 
   S = {
@@ -477,7 +489,7 @@ function renderQuiz(){
         <button class="flag ${S.flag[S.cur] ? 'on' : ''}" onclick="toggleFlag()">⚑ ${S.flag[S.cur] ? 'Flagged for review' : 'Flag for review'}</button>
       </div>
       <h2 class="qtext">${esc(q.q)}</h2>
-      ${q.img ? `<img class="qimg" src="${q.img}" alt="Picture for this question">` : ''}
+      ${pictureHtml(q, false)}
       <div class="opts">${optsHtml}</div>
       ${expHtml}
     </section>
@@ -591,7 +603,7 @@ function renderResults(){
       <div class="rev ${status}">
         <div class="muted">Q${i+1} · ${esc(TOPICS[q.t])}${S.flag[i] ? ' · ⚑ flagged' : ''}</div>
         <p><b>${esc(q.q)}</b></p>
-        ${q.img ? `<img class="qimg small" src="${q.img}" alt="Picture for this question">` : ''}
+        ${pictureHtml(q, true)}
         <p class="ans">Your answer: ${yourTxt}</p>
         <p class="ans">Correct answer: <b>${'ABCD'[q.a]}. ${esc(q.o[q.a])}</b></p>
         <p class="note">${esc(q.e)}</p>

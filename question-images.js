@@ -15,12 +15,12 @@ function M(t, n, q, correct, wrong){
   const opts = wrong.slice();
   const idx = n % 4;
   opts.splice(idx, 0, correct);
-  IMG_BANK.push({ t: t, q: q, o: opts, a: idx, e: 'Handbook question ' + n + ': ' + correct, img: imgPath(n) });
+  IMG_BANK.push({ t: t, q: q, o: opts, a: idx, e: 'Handbook question ' + n + ': ' + correct, img: imgPath(n), svg: (typeof DRAW !== 'undefined' && DRAW[n]) || null });
 }
 
 // Picture-choice question (options are the pictured signs 1, 2, 3).
 function F(t, n, q, opts, a){
-  IMG_BANK.push({ t: t, q: q, o: opts, a: a, e: 'Handbook question ' + n + ': answer No. ' + (a + 1) + '.', img: imgPath(n), fixed: true });
+  IMG_BANK.push({ t: t, q: q, o: opts, a: a, e: 'Handbook question ' + n + ': answer No. ' + (a + 1) + '.', img: imgPath(n), svg: (typeof FDRAW !== 'undefined' && FDRAW[n]) || null, fixed: true });
 }
 
 /* ---- 1-12: general sign questions (topic: signs) ---- */
