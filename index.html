@@ -1,0 +1,649 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sharjah Theory Practice</title>
+<style>
+:root{
+  --bg:#f4f6fb;--card:#ffffff;--text:#1b2233;--muted:#667085;
+  --primary:#1d4ed8;--primary-2:#1e40af;--ok:#15803d;--ok-bg:#dcfce7;
+  --bad:#b91c1c;--bad-bg:#fee2e2;--flag:#b45309;--flag-bg:#fef3c7;
+  --border:#dfe4ee;--radius:14px;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0f1420;--card:#171e2e;--text:#e7ecf6;--muted:#9aa6bd;
+    --primary:#60a5fa;--primary-2:#3b82f6;--ok:#4ade80;--ok-bg:#14361f;
+    --bad:#f87171;--bad-bg:#3b1717;--flag:#fbbf24;--flag-bg:#3a2d10;--border:#2a3347;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0f1420;--card:#171e2e;--text:#e7ecf6;--muted:#9aa6bd;
+  --primary:#60a5fa;--primary-2:#3b82f6;--ok:#4ade80;--ok-bg:#14361f;
+  --bad:#f87171;--bad-bg:#3b1717;--flag:#fbbf24;--flag-bg:#3a2d10;--border:#2a3347;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font:16px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+.wrap{max-width:840px;margin:0 auto;padding:16px}
+header.top{padding:8px 0 12px}
+header.top h1{margin:0;font-size:1.5rem}
+.sub{margin:4px 0 0;color:var(--muted);font-size:.9rem}
+h2{font-size:1.2rem;margin:.2rem 0 .8rem}
+h3{font-size:1.05rem;margin:0 0 .6rem}
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:18px;margin-bottom:14px}
+.muted{color:var(--muted);font-size:.9rem}
+.note{color:var(--muted);font-size:.85rem}
+.form{display:grid;gap:12px}
+label{display:grid;gap:6px;font-weight:600;font-size:.92rem}
+label.chk{display:flex;align-items:center;gap:8px;font-weight:500}
+select{font:inherit;padding:9px 10px;border-radius:10px;border:1px solid var(--border);background:var(--card);color:var(--text)}
+.btn{font:inherit;font-weight:600;padding:10px 16px;border-radius:10px;border:1px solid var(--border);background:var(--card);color:var(--text);cursor:pointer}
+.btn:hover:not(:disabled){border-color:var(--primary)}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.btn.primary{background:var(--primary);border-color:var(--primary);color:#fff}
+.btn.primary:hover:not(:disabled){background:var(--primary-2)}
+.btn.ghost{background:transparent}
+.row{display:flex;gap:10px;flex-wrap:wrap;justify-content:space-between;margin:6px 0 14px}
+.row .right{display:flex;gap:10px;flex-wrap:wrap}
+.qhead{display:flex;justify-content:space-between;color:var(--muted);font-size:.9rem;margin:4px 2px}
+.bar{height:8px;background:var(--border);border-radius:99px;overflow:hidden;margin:6px 0 14px}
+.bar span{display:block;height:100%;background:var(--primary);transition:width .25s}
+.tagrow{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.tag{display:inline-block;font-size:.78rem;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--primary);background:color-mix(in srgb,var(--primary) 12%,transparent);padding:3px 9px;border-radius:99px}
+.flag{font:inherit;font-size:.85rem;border:1px dashed var(--flag);background:transparent;color:var(--flag);padding:4px 10px;border-radius:99px;cursor:pointer}
+.flag.on{background:var(--flag-bg);border-style:solid}
+.qtext{font-size:1.15rem;line-height:1.45;margin:12px 0 14px}
+.opts{display:grid;gap:10px}
+.opt{text-align:left;font:inherit;padding:12px 14px;border-radius:12px;border:1px solid var(--border);background:var(--card);color:var(--text);cursor:pointer;display:flex;gap:10px;align-items:flex-start}
+.opt b{flex:0 0 26px;height:26px;border-radius:8px;display:inline-flex;align-items:center;justify-content:center;background:var(--border);font-size:.85rem}
+.opt:hover:not(:disabled){border-color:var(--primary)}
+.opt.sel{border-color:var(--primary);box-shadow:0 0 0 2px color-mix(in srgb,var(--primary) 30%,transparent)}
+.opt:disabled{cursor:default}
+.opt.correct{background:var(--ok-bg);border-color:var(--ok)}
+.opt.correct b{background:var(--ok);color:#fff}
+.opt.wrong{background:var(--bad-bg);border-color:var(--bad)}
+.opt.wrong b{background:var(--bad);color:#fff}
+.exp{margin-top:14px;padding:12px 14px;border-radius:12px;font-size:.95rem}
+.exp.ok{background:var(--ok-bg)}
+.exp.bad{background:var(--bad-bg)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(40px,1fr));gap:6px;margin:6px 0 10px}
+.grid button{font:inherit;font-size:.85rem;height:38px;border-radius:9px;border:1px solid var(--border);background:var(--card);color:var(--text);cursor:pointer}
+.grid button.cur{outline:2px solid var(--primary)}
+.grid button.answered{background:var(--border)}
+.grid button.ok{background:var(--ok-bg);border-color:var(--ok)}
+.grid button.bad{background:var(--bad-bg);border-color:var(--bad)}
+.grid button.flagged{border-color:var(--flag);box-shadow:inset 0 -4px 0 var(--flag)}
+.hint{color:var(--muted);font-size:.82rem}
+.score{display:flex;gap:18px;align-items:center;flex-wrap:wrap}
+.big{font-size:2.6rem;font-weight:800;line-height:1}
+.pass .big{color:var(--ok)}
+.fail .big{color:var(--bad)}
+.verdict{font-weight:800;font-size:1.1rem}
+.pass .verdict{color:var(--ok)}
+.fail .verdict{color:var(--bad)}
+table{width:100%;border-collapse:collapse;font-size:.92rem}
+th,td{text-align:left;padding:7px 6px;border-bottom:1px solid var(--border)}
+th{color:var(--muted);font-weight:600}
+.filters{display:flex;gap:8px;flex-wrap:wrap;margin:6px 0 12px}
+.filters button{font:inherit;font-size:.85rem;padding:6px 12px;border-radius:99px;border:1px solid var(--border);background:var(--card);color:var(--text);cursor:pointer}
+.filters button.on{background:var(--primary);border-color:var(--primary);color:#fff}
+.rev{border:1px solid var(--border);border-radius:12px;padding:12px 14px;margin-bottom:10px}
+.rev.wrong{border-left:5px solid var(--bad)}
+.rev.right{border-left:5px solid var(--ok)}
+.rev.none{border-left:5px solid var(--muted)}
+.rev p{margin:6px 0}
+.rev .ans{font-size:.93rem}
+.qimg{display:block;max-width:100%;max-height:230px;width:auto;margin:4px auto 14px;background:#fff;border-radius:10px;padding:10px;border:1px solid var(--border)}
+.qimg.small{max-height:120px;margin:4px 0 10px}
+@media (max-width:520px){
+  .big{font-size:2.1rem}
+  .qtext{font-size:1.05rem}
+  .btn{flex:1 1 auto;text-align:center}
+}
+</style>
+</head>
+<body>
+<main class="wrap">
+  <header class="top">
+    <h1>Sharjah Driving Theory Practice</h1>
+    <p class="sub">Questions are based on the Sharjah Driving Institute handbook <em>Basics of Driving</em> (4th edition, 2021). Always confirm against the official handbook and the Sharjah Police website.</p>
+  </header>
+  <div id="app"></div>
+</main>
+
+<script src="question-images.js"></script>
+<script>
+/* ============================================================
+   SETTINGS
+   ============================================================ */
+const PASS = 75;               // practice pass mark in percent (change if you like)
+const HIST_KEY = 'sharjahTheoryHistory';
+// Picture questions need the images/ folder (copied from the handbook).
+// Public copy: false. Set to true only when images/ is next to index.html.
+const SHOW_PICTURES = false;
+
+/* ============================================================
+   TOPICS
+   ============================================================ */
+const TOPICS = [
+  "Fatigue & vehicle checks",          // 0
+  "Vehicle controls & gears",          // 1
+  "Seat belts & child safety",         // 2
+  "Traffic signs",                     // 3
+  "Traffic lights & road markings",    // 4
+  "Intersections & roundabouts",       // 5
+  "Turning, lanes & indicators",       // 6
+  "Overtaking",                        // 7
+  "Stopping & parking",                // 8
+  "Speed & stopping distance",         // 9
+  "Night, weather & visibility",       // 10
+  "Highway driving",                   // 11
+  "Mobile phones, emergencies & first aid", // 12
+  "Fines & violations"                 // 13
+];
+
+/* ============================================================
+   QUESTION BANK
+   [topicIndex, question, [options], correctIndex, explanation]
+   ============================================================ */
+const TEXT_BANK = [
+  [0,"According to the handbook, what is the only way to prevent driver fatigue?",["Drinking strong coffee","Getting enough sleep","Driving with the windows closed","Turning the radio up loud"],1,"Section 1.3.1: the only way to prevent fatigue is to get enough sleep."],
+  [0,"How many hours of sleep is generally recognised as a normal need?",["4 hours","6 hours","8 hours","10 hours"],2,"Section 1.3.1: eight hours is the average and normal need."],
+  [0,"While driving you keep yawning and your eyes feel heavy. What should you do?",["Speed up to reach your destination sooner","Stop immediately and take a break","Turn the radio up loud","Open the window only"],1,"Section 1.3.2: these are warning signs of fatigue. Stop and take a break."],
+  [0,"How often should you take regular breaks on long trips?",["Every 30 minutes","At least every two hours","Only when you feel hungry","Only at your destination"],1,"Section 1.3.3: take regular breaks, at least every two hours."],
+  [0,"Which of these is NOT a warning sign of driver fatigue?",["Yawning often","Vehicle wandering over the road","Feeling alert and focused","Slow reactions"],2,"Section 1.3.2 lists yawning, eyes heavy, wandering and slow reactions as warning signs."],
+  [0,"Which liquid should be used to top up the battery water?",["Tap water","Distilled water","Engine oil","Windscreen washer fluid"],1,"Basic vehicle checks: battery water is topped up with distilled water."],
+  [0,"When must you NOT open the radiator cap?",["When the engine is cold","When the engine is hot","When the car is parked","At night"],1,"Basic vehicle checks: hot coolant can spurt out and scald you."],
+  [0,"Where should the engine oil film sit on the dipstick?",["Below the lower mark","Between the upper and lower marks","Above the upper mark","It does not matter"],1,"Basic vehicle checks: the oil film should be between the upper and lower marks."],
+  [0,"How often should fluid levels be checked (when the engine is cold)?",["Daily","Weekly","Yearly","Only after an accident"],1,"Basic vehicle checks: check all fluid levels weekly when cold."],
+  [0,"Fluids should never be topped up beyond which level?",["The minimum level","The UPPER / MAX level","Halfway","The lower mark"],1,"Basic vehicle checks: do not top up beyond the UPPER/MAX level."],
+  [0,"Before driving off, what should you look for under the vehicle?",["Fluid leaking on the ground","Stray coins","Mud on the tyres","Sunlight glare"],0,"Basic vehicle checks: look for leakage under the engine before driving off."],
+  [0,"What is the area beside a vehicle that the mirrors do not cover?",["Safe zone","Blind spot","Dead road","Shadow lane"],1,"Section 1.4.7: the area not covered by mirrors is the blind spot."],
+  [0,"Where should the middle of the head restraint line up?",["With your shoulder and hip","With your ear and eye","With your nose and chin","With the top of the mirror"],1,"Section 1.4.5/1.4.6: the middle of the head restraint forms a straight line with your ear and eye."],
+  [0,"Which is correct about your seating position?",["Keep your knees slightly bent when the clutch is fully pressed","Stretch your legs straight","Rest your head on the head restraint while driving","Sit as far from the wheel as possible"],0,"Section 1.4.6: knees should be slightly bent when the clutch is fully depressed. Do not lean on the head restraint."],
+
+  [1,"In an automatic car, which foot should you use for the pedals?",["Left foot only","Right foot only","Both feet at once","Whichever is comfortable"],1,"Section 1.6.2: use only your right foot for an automatic car."],
+  [1,"In an automatic car, what does 'P' on the gear selector mean?",["Park","Power","Passing","Pause"],0,"Section 1.6.2: P = Park, used to keep the vehicle stationary."],
+  [1,"When is 'N' (Neutral) used in an automatic car?",["For reversing","To restart a stalled engine or stop briefly with the engine running","For highway driving","For parking on hills"],1,"Section 1.6.2: Neutral is for restarting a stalled engine or stopping briefly with the engine running."],
+  [1,"In a manual car, what should you do before engaging a gear?",["Depress the accelerator and release the clutch","Release the accelerator and depress the clutch","Release both pedals","Press the brake and the clutch together"],1,"Section 1.6.1: before engaging a gear, release the accelerator and depress the clutch."],
+  [1,"Which gear is used for high-speed cruising on dual carriageways and motorways?",["First","Third","Fifth","Reverse"],2,"Section 1.6.2: fifth gear is lowest power, highest speed, for open roads."],
+  [1,"Which gear gives the greatest power but the lowest speed, used for moving off?",["Second","Third","First","Fifth"],2,"Section 1.6.2: first gear gives the greatest power and is used for moving off."],
+  [1,"Before reversing, what must you check especially?",["That the way behind is clear, especially for children and cyclists","That the radio is off","That the headlights are on high beam","The fuel gauge"],0,"Section 1.6.3: check the way behind is clear, especially for children and cyclists."],
+  [1,"Which pedal action does the handbook advise for braking and accelerating?",["Use your left foot","Use your right foot for both","Use both feet on the brake","Use your hand on the accelerator"],1,"Section 2.7: use your right foot for both brake and accelerator."],
+
+  [2,"By law, who must wear a seat belt when one is fitted?",["Only the front passenger","Only children","All drivers and passengers","Only on highways"],2,"Section 1.5.3: by law all drivers and passengers must wear seat belts if fitted."],
+  [2,"Is 'doubling up' (one seat belt across two people) allowed?",["Yes, for children","Yes, on short trips","No, it is illegal and unsafe","Yes, if the car is slow"],2,"Section 1.5.3: doubling up is both illegal and unsafe."],
+  [2,"Children under 12 months must use:",["An adult's lap","A suitable child restraint","An adult seat belt only","Nothing if the car is slow"],1,"Section 1.5.3: children under 12 months must wear a suitable child restraint."],
+  [2,"Your seat belt is worn and frayed. What should you do?",["Keep using it","Tape it up","Have it replaced","Use it only on highways"],2,"Section 1.5.4: a worn, frayed, faded or damaged seat belt must be replaced."],
+  [2,"In a crash, which collision injures and kills people most?",["The car collision","The human collision","Both are equal","Neither"],1,"Section 1.5.1: the human collision, when occupants are thrown about, is the more dangerous one."],
+  [2,"Is it legal to ride in the open load space of a utility or pickup?",["Yes, if you drive slowly","No, it is illegal","Yes, if it has a roll-over protection device","Yes, in rural areas"],1,"Section 1.5.4: it is illegal, even with a roll-over protection device fitted."],
+  [2,"Which is correct about a rear-facing child seat in the front seat?",["It is always safe","It must not be used in front with an active airbag unless the airbag is turned off","It is recommended in the front","It is safe at low speed"],1,"Section 1.5.4 warning: infants can be killed if the airbag hits the back of the seat."],
+  [2,"Children under which age should NOT sit in the front seat?",["5 years","10 years","12 years","15 years"],1,"Awareness messages: do not allow children under 10 to sit on the front seat."],
+
+  [3,"In the UAE, what shape and colour are warning signs?",["Red triangle with white background and black symbols","Blue circle","White square","Yellow diamond"],0,"Section 2.1.1: warning signs are a red triangle with a white background and black symbols."],
+  [3,"A red circle on a regulatory sign means:",["Something is required","Something is prohibited","It is an information sign","It is a road works sign"],1,"Section 2.1.1: a red circle means prohibited; a blue circle means required."],
+  [3,"A blue circle on a regulatory sign means:",["Something is prohibited","Something is required (mandatory)","A warning","A parking area"],1,"Section 2.1.1: a blue circle indicates something is required."],
+  [3,"Information and direction signs are usually:",["Triangles","Circles","Square or rectangular","Octagons"],2,"Section 2.1.1: information and direction signs are square or rectangular."],
+  [3,"What happens if you disobey a mandatory sign?",["Nothing","It is an offence","You receive a free warning only","It only matters on highways"],1,"Section 2.1.1: mandatory signs are compulsory; it is an offence to disobey them."],
+  [3,"Signs for road works are used to:",["Advertise services","Warn you of temporary hazards and protect workers","Mark parking bays","Show tourist routes"],1,"Section 2.1.1: road works signs warn of temporary hazards and protect people working on the road."],
+  [3,"A 'NO OVERTAKING' sign means:",["You may overtake only at night","Overtaking is not allowed","Trucks may overtake","You must overtake"],1,"Section 2.6.2: you must not overtake where a no-overtaking sign is shown."],
+  [3,"A red circle with the number 60 means:",["Minimum speed 60 km/h","Maximum speed 60 km/h","Recommended speed 60 km/h","Average speed 60 km/h"],1,"Prohibitory speed-limit sign: a red circle with a number is a maximum speed."],
+  [3,"A blue circle with the number 60 means:",["Maximum 60 km/h","Minimum speed 60 km/h","Stop for 60 seconds","Road closed 60 metres ahead"],1,"A blue circle is a requirement, here a minimum speed of 60 km/h (handbook: 60 km/h minimum speed limit on a freeway)."],
+  [3,"A GIVE WAY sign means you must:",["Stop completely every time","Give way to traffic on the intersecting road","Speed up","Ignore it if the road looks clear"],1,"Section 2.3.1: at a GIVE WAY sign, give way to all traffic travelling along or turning from the intersecting road."],
+
+  [4,"A red traffic light means:",["Go if the way is clear","Wait behind the stop line","Slow down and proceed","Turn left only"],1,"Section 2.1.2: red means wait behind the stop line."],
+  [4,"Amber (yellow) light means:",["Speed up to pass","Stop at the stop line, unless you are already past it or too close to stop safely","Turn right only","Go regardless"],1,"Section 2.1.2: amber means stop at the stop line unless it is unsafe to do so."],
+  [4,"A green light means:",["Go without looking","Go if the way is clear, and give way to pedestrians still crossing","Stop for pedestrians","Honk and proceed"],1,"Section 2.1.2: green means you may go if the way is clear, giving way to pedestrians."],
+  [4,"A red cross above a lane means:",["The lane is open","The lane is closed to traffic facing the sign","You must turn left","Slow down"],1,"Section 2.1.2 (lane signals): red crosses mean the lane is closed."],
+  [4,"A yellow diagonal arrow above a lane means:",["Change lanes in the direction shown","The lane is closed","The speed limit is 60","It is a bus lane"],0,"Section 2.1.2: a yellow diagonal arrow means change lanes in the direction shown."],
+  [4,"A continuous solid line in the centre of a bridge or tunnel means:",["You may cross it when clear","You should avoid crossing the line","It is a bus lane","It is a speed bump"],1,"General Question 114: avoid crossing a continuous solid centre line."],
+  [4,"Can you cross a single or double continuous dividing line to overtake?",["Yes, if the road is empty","No, you must not","Yes, at night only","Only motorcycles may"],1,"Section 2.6.2: you must not cross single or double continuous dividing lines to overtake."],
+  [4,"Stopping on a yellow box junction is:",["Allowed for cars","An offence (a fine applies)","Allowed when the box is empty","Allowed for trucks only"],1,"Federal violations table (item 57): stopping on the yellow box is fined."],
+
+  [5,"At an uncontrolled four-way intersection you must give way to:",["The car on your right","The car on your left","No one","The car behind you"],1,"Section 2.3.2: at a four-way uncontrolled intersection, give way to the car on your left."],
+  [5,"Which is NOT a controlled intersection?",["One with traffic signals","One with a STOP sign","One with a GIVE WAY sign","One with no signs, lights or police"],3,"Section 2.3.1 vs 2.3.2: controlled intersections have signals, signs, a roundabout or a police officer."],
+  [5,"At a STOP sign you must:",["Slow down only","Stop and give way to traffic on the intersecting road","Stop only if other cars are coming","Honk and go"],1,"Section 2.3.1: at a STOP sign you must stop and give way."],
+  [5,"When a traffic policeman is directing traffic and the light is green, you should:",["Follow the light","Follow the policeman, whose directions overrule signals","Ignore the policeman","Wait 10 minutes"],1,"Section 2.1.4: a policeman's directions overrule traffic signals and signs."],
+  [5,"If the traffic policeman's back is towards you, you must:",["Continue at your speed","Stop and wait for instructions","Turn around","Overtake the vehicle in front"],1,"Section 2.3 (police directing traffic): stop and wait for instructions when their back is towards you."],
+  [5,"Why should you not enter an intersection when a queue prevents you from fully exiting?",["It would block crossing traffic","It is faster","It is allowed","Only the speed limit matters"],0,"Section 2.3.3: keep intersections clear so you do not block crossing traffic."],
+  [5,"At a roundabout, who has the right-of-way?",["Vehicles entering the roundabout","Vehicles already in the roundabout","Trucks only","Whoever arrives first"],1,"Section 2.3.4: traffic already in the roundabout has the right-of-way."],
+  [5,"Which direction do vehicles travel around a roundabout?",["Clockwise","Counter-clockwise","Either direction","Straight through"],1,"Section 2.3.4: always travel counter-clockwise."],
+  [5,"Once you are in a roundabout, you should:",["Stop to let others in","Keep moving unless you must stop to avoid a collision","Stop at every exit","Reverse to your exit"],1,"Section 2.3.4: do not stop in a roundabout except to avoid a collision."],
+  [5,"When turning right at a roundabout, which lane do you approach from?",["Left lane","Right lane","Middle lane","Any lane"],1,"Section 2.2.3: approach from the right lane, signal right, stay right and exit right."],
+  [5,"When turning left at a roundabout, you should:",["Approach from the right lane","Approach from the left lane, signal left and exit in the left lane","Approach from the centre","Signal right"],1,"Section 2.2.3: turning left, approach from the left lane and exit in the left lane."],
+  [5,"Before entering a roundabout, you should:",["Enter immediately","Watch for a safe gap in the circulating traffic","Honk to alert others","Accelerate to get in front"],1,"Section 2.3.4: enter only when there is an adequate gap."],
+  [5,"Why should you not enter a roundabout directly beside another vehicle already in it?",["That vehicle may be exiting at the next exit","It is a speed issue only","It is allowed","Because of the traffic lights"],0,"Section 2.3.4: that vehicle may be leaving at the next exit."],
+
+  [6,"Which of these requires you to indicate?",["Changing lanes","Driving straight in the same lane with no traffic","Driving at a constant speed","Passing a bus stop without stopping"],0,"Section 2.2.2: you must indicate before changing lanes, turning, pulling out, overtaking and slowing or stopping."],
+  [6,"What is the correct order when turning?",["Manoeuvre - Signal - Mirrors","Mirrors - Signal - Manoeuvre","Signal - Manoeuvre - Mirrors","Signal - Mirrors - Manoeuvre"],1,"Section 2.4.2: Mirrors - Signal - Manoeuvre."],
+  [6,"When turning left, you should:",["Cut the corner","Not cut the corner","Accelerate through the junction","Turn without indicating"],1,"Section 2.4.2: indicate in advance and do not cut the corner."],
+  [6,"At a multi-lane intersection, when should you move into the correct lane?",["At the last moment","Early, before the intersection","After you have turned","Never change lanes"],1,"Section 2.4.4: move into the correct lane early; do not change lanes at the last moment."],
+  [6,"Can you cross an unbroken lane line to turn at a multi-lane intersection?",["Yes, always","No, unless the vehicle is 7.5 metres or longer and cannot turn from a single lane","Yes, if no one is watching","Only on motorways"],1,"Section 2.4.4: crossing unbroken lines is only allowed for long vehicles that cannot turn from a single lane."],
+  [6,"If you are in a lane marked with an arrow at an intersection, you must:",["Go in the direction of the arrow","Go straight regardless","Turn around","Stop"],0,"Section 2.4.4: follow the direction of the arrow."],
+  [6,"When can you make a U-turn at traffic control signals?",["Always","Only where a 'U TURNS PERMITTED' sign is shown","Only on Fridays","Only at night"],1,"Section 2.4.3: no U-turns at traffic signals unless a 'U TURNS PERMITTED' sign is shown."],
+  [6,"Before making a U-turn, what should you do first?",["Look in your rear-view mirror","Accelerate hard","Switch off your lights","Honk"],0,"Section 2.4.3: first look in your rear-view mirror, then signal, give way and check."],
+  [6,"When changing lanes, what must you do?",["Check mirrors and blind spot, signal, and check again before moving","Brake sharply","Cut in front quickly","Stop in the middle of the lane"],0,"Section 2.5 and 2.6.1: check mirrors and blind spot, signal, check again, then steer gradually."],
+  [6,"Should you change lanes frequently in heavy traffic?",["Yes","No, stay in the lane you selected for your destination","Only at night","Only on roundabouts"],1,"General Question 117: stay in the lane you selected for your destination."],
+  [6,"Where should you avoid changing lanes?",["On open highways","In or near an intersection","On roads with no traffic","In the right lane at traffic lights"],1,"Section 2.6.1: do not change lanes in or near an intersection."],
+
+  [7,"Overtaking is one of the most dangerous manoeuvres. When should you overtake?",["When you are sure you can do so without danger to yourself or others","Whenever you are behind a slow car","Only when the car in front is a truck","Always on a bend"],0,"Section 2.6: never overtake unless you are sure you can do so safely."],
+  [7,"When must you NOT overtake?",["When the vehicle ahead is in the left lane","When it has slowed down or stopped at a pedestrian crossing","On a motorway","When the road is wide"],1,"Section 2.6.2: never overtake a vehicle that has slowed or stopped at a pedestrian crossing."],
+  [7,"Where must you not overtake?",["Near a blind bend or the crest of a hill","On a straight, clear road","On a motorway","In the left lane when it is empty"],0,"Section 2.6.2: do not overtake near a blind bend or the crest of a hill."],
+  [7,"Which signal should you give before passing?",["Right indicator","Left indicator","Hazard lights","No signal"],1,"Section 2.6.1: use your left-turn signal to show that you want to pass."],
+  [7,"When another vehicle wants to pass you, you must:",["Speed up","Move to the right and let it pass","Move to the left","Stop in the middle"],1,"Section 2.6.3: move to the right and let it pass."],
+  [7,"If the vehicle you are passing speeds up, what should you do?",["Race it","Go back to your original lane and do not race","Stop immediately","Overtake again"],1,"Section 2.6.1: if the vehicle speeds up, go back to your original lane; do not race."],
+  [7,"Overtaking a truck on a curve or hill is:",["Recommended","Never attempted where visibility is limited","Allowed at night","Allowed with hazard lights on"],1,"Section 2.6.1: never overtake a truck on a curve or hill where visibility is limited."],
+
+  [8,"When you stop at the roadside, how far from the curb should you be?",["About 30 centimetres","About 1 metre","About 2 metres","Touching the curb"],0,"Section 2.7: stop parallel to the curb, no more than about 30 cm away."],
+  [8,"How far must you be able to see clearly in both directions before parking?",["50 metres","125 metres","300 metres","10 metres"],1,"Section 2.8.1: never park without a clear view of at least 125 metres in both directions."],
+  [8,"In a NO PARKING area you may stop for up to:",["3 minutes to load or unload goods or passengers","15 minutes","30 minutes","1 hour"],0,"Section 2.8.1: up to 3 minutes to pick up or put down goods or passengers."],
+  [8,"Parking facing downhill with a curb, you should turn your front wheels:",["Away from the curb","Towards the curb","Straight ahead only","Sharply to the left"],1,"Section 2.8 (parking on a hill, Diagram A): turn wheels towards the curb."],
+  [8,"Parking facing uphill in a manual car, which gear should you select?",["Reverse","First","Fifth","Neutral only"],1,"Section 2.8 (parking on a hill): facing uphill, select first gear; facing downhill, select reverse."],
+  [8,"A parallel-parking space should be about how much longer than your vehicle?",["The same length","About 1.5 times","About 3 times","Only 1 metre more"],1,"Section 2.8.2: find a space about one and a half times longer than your vehicle."],
+  [8,"After parking, you should:",["Leave the engine running","Apply the parking brake, turn off the engine, remove the key and lock the car","Leave the lights on","Leave children inside briefly"],1,"Section 2.8.1: apply the parking brake, turn off the engine and lights, remove the key and lock the door. Do not leave children in the vehicle."],
+  [8,"Where must you NOT park?",["On a curve or hill","In a clearly marked bay with a clear view","On a wide straight road with a clear view","Parallel to the curb"],0,"Section 2.8.1: never park on a curve, hill, or without a clear view."],
+
+  [9,"What is the 'two second rule' used for?",["Estimating a safe following distance","Timing traffic lights","Checking tyre pressure","Measuring fuel use"],0,"Section 3.2.1: the two-second rule estimates a safe following distance."],
+  [9,"In bad road or weather conditions, how long a gap should you aim for?",["1 second","2 seconds","4 to 5 seconds","10 seconds"],2,"Section 3.2.1: in poor conditions increase the following distance to four or five seconds."],
+  [9,"At 60 km/h, a car travels about how far during a 1-second reaction?",["5 metres","18 metres","54 metres","100 metres"],1,"Section 3.2.2: at 60 km/h the car travels about 18 metres while reacting."],
+  [9,"At 60 km/h in good conditions, the total stopping distance is about:",["18 metres","36 metres","54 metres","90 metres"],2,"Section 3.2.2: 18 m reaction + 36 m braking = about 54 m."],
+  [9,"Stopping distance equals:",["Reaction distance + braking distance","Speed x time","Braking distance only","Following distance x 2"],0,"Section 3.2.2: reaction distance + braking distance = stopping distance."],
+  [9,"On wet roads you should at least:",["Keep the same following distance","Double the following distance","Reduce the following distance","Stop driving"],1,"Section 3.3.2: double the following distance when the road is wet or visibility is poor."],
+  [9,"Why is driving fast dangerous?",["You have less time to react to hazards","You can see more","Brakes work better at high speed","Other drivers get more room"],0,"Section 3.1.1: at high speed you have less time to react and injuries are more severe."],
+  [9,"When pedestrians and cyclists are around, you should:",["Speed up to pass","Reduce speed and be ready to stop","Honk continuously","Use your high beam"],1,"General Question 124: reduce speed and be ready to stop."],
+  [9,"Compared with a car, a loaded truck needs:",["A shorter stopping distance","A longer braking distance; the reaction distance stays the same","No difference","A shorter reaction time"],1,"Section 3.2.3: loads make braking distance longer while reaction distance stays the same."],
+  [9,"What is the speed limit in the city, according to the handbook?",["40 km/h","60 km/h","80 km/h","100 km/h"],1,"General Question 116: the city speed limit in the handbook is 60 km/h."],
+
+  [10,"Compared with day driving, accidents and death rates at night are about:",["The same","Three times higher","Half","Ten times lower"],1,"Section 3.3.1: accident and death rates increase by about three times at night."],
+  [10,"When must you dip (lower) your high beams?",["Only on wet roads","When within 200 metres of an approaching vehicle, or driving within 200 metres behind another vehicle","Never on highways","Only in fog"],1,"Section 3.3.2 (use of high beam): dip within 200 m of an oncoming vehicle or behind a vehicle."],
+  [10,"An oncoming vehicle has its full beam on. You should:",["Flash your lights back","Look to the right edge of the road, slow down if needed, and keep to the right","Speed up","Switch on your full beam"],1,"Section 3.3.1 / use of high beam: look right, slow down, keep to the right."],
+  [10,"If an oncoming vehicle's high beam dazzles you and you cannot see, you should:",["Stop","Speed up","Switch off your headlights","Reverse"],0,"Section 3.3.2 (use of high beam): if you cannot see, stop."],
+  [10,"In rain, you should:",["Turn your headlights on to low beam and check your wipers","Turn off your headlights","Use only hazard lights","Drive faster to clear the water"],0,"Section 3.3.2: use low beam, check your wipers and keep the windscreen clear."],
+  [10,"In fog, which lights should you avoid?",["Fog lights","Low beam headlights","Hazard lights and full beam","Windscreen wipers"],2,"Section 3.3.3: avoid parking lights, full beam or hazard lights in fog."],
+  [10,"When should hazard lights be used?",["Whenever it rains","Only when there is danger","Whenever you park","Whenever you drive at night"],1,"General Question 108: hazard lights only when there is any danger."],
+  [10,"When should you use the fog light?",["Only in summer","While driving in fog","Always at night","Never"],1,"General Question 94: use fog lights while driving in fog."],
+  [10,"On hot roads, when should tyres be changed?",["When tread is less than 6 mm","When tread is less than 3 mm","When they look shiny","Every 6 months"],0,"Section 3.3.5: change tyres when the tread is less than 6 mm."],
+  [10,"Which is a good night-driving precaution?",["Keep windscreens, lights and mirrors clean","Use full beam when behind another car","Use fog lights in clear weather","Drive faster to reach home sooner"],0,"Section 3.3.1 night tips: keep windscreens, lights and mirrors clean."],
+
+  [11,"On a highway you must NOT:",["Check your mirrors","Reverse or make a U-turn","Indicate before changing lanes","Keep a safe distance"],1,"Section 3.4.5: never reverse or make a U-turn on a highway."],
+  [11,"If your vehicle breaks down on a highway, you should:",["Stop in the middle lane","Pull into the emergency stopping lane and switch on hazard lights","Walk along the carriageway","Reverse to the exit"],1,"Section 3.4.1: pull into the emergency stopping lane and use hazard lights."],
+  [11,"Before re-entering traffic after a breakdown, you should indicate for at least:",["2 seconds","5 seconds","10 seconds","No indication needed"],1,"Section 3.4.1: indicate for at least 5 seconds before moving out."],
+  [11,"When should you use the left lane on a highway?",["Always","Only when overtaking or when other lanes are congested","Only at night","Only when it is raining"],1,"Section 3.4.1: do not use the left lane unless overtaking or other lanes are congested."],
+  [11,"On a highway your speed should be:",["As low as possible","Not below the posted minimum (unless conditions require slower) and not above the limit","Any speed you like","Exactly 60 km/h"],1,"Section 3.4.3: do not exceed the limit and do not drive below the posted minimum."],
+  [11,"Which is NOT allowed on a highway?",["Pedestrians on designated paths","Pedestrians walking along the carriageway","Merging smoothly with traffic","Signalling a lane change"],1,"Section 3.4.5: pedestrians and cyclists are not allowed on highways except on paths."],
+  [11,"In rain or fog on a highway, you should:",["Increase speed","Reduce speed, increase following distance and use low beam","Use high beam","Stop in the lane"],1,"Section 3.4.1: reduce speed, increase following distance and use low beam."],
+  [11,"When leaving a highway, you should:",["Select the correct lane well in advance and signal early","Stop on the exit slip road","Cut across lanes","Reverse onto the exit"],0,"Section 3.4.4: select the correct lane and indicate well in advance."],
+
+  [12,"Using a mobile phone while driving can make a fatal accident up to how many times more likely?",["Two times","Nine times","Fifty percent","Not at all"],1,"Section 3.5: the risk of a fatal accident is up to nine times higher when using a mobile phone."],
+  [12,"What is the safest way to use your phone while driving?",["Use a hands-free kit and keep driving","Pull over somewhere safe before using any function","Text at traffic lights","Use it with one hand"],1,"Section 3.5: pull over to a safe place to use any phone function."],
+  [12,"How do you recognise an emergency vehicle?",["Its siren or red and/or blue flashing lights","Its colour only","Its horn","Its number plate"],0,"Section 3.7: identified by siren or red and/or blue flashing lights."],
+  [12,"When you hear an emergency vehicle approaching from either direction, you must:",["Speed up to clear the road","Slow down, move as far right as you safely can, and stop","Turn off the engine","Follow it"],1,"Section 3.7: slow down, move as far right as safely possible and stop."],
+  [12,"Is it legal to follow a fire vehicle or ambulance responding to a call?",["Yes, if you are in the same lane","No, it is illegal","Yes, at night only","Yes, if you are a professional driver"],1,"Section 3.7: it is illegal to follow a fire vehicle or ambulance responding to a call."],
+  [12,"A stopped emergency vehicle with flashing lights is ahead in your direction. You should:",["Slow down, pass with caution, and move over if it is safe and the road has two or more lanes","Stop behind it","Honk and pass","Speed past it"],0,"Section 3.7: slow down, pass with caution and move over to leave a lane's clearance if possible."],
+  [12,"At an accident scene, what should you check first?",["The casualty's belongings","Whether there is any danger to you","The colour of the vehicles","Who caused the accident"],1,"Section 3.6: check for danger to yourself first, then bystanders, then the casualty."],
+  [12,"What number should you call for emergency services?",["911","999","112","100"],1,"Section 3.6: call 999 for assistance from emergency services."],
+  [12,"Should you move an injured person?",["Always, immediately","Only if they are in danger, such as a fire or in the path of traffic","Only if they ask","Never"],1,"Section 3.6: do not move injured people unless they are in danger."],
+  [12,"Which action is correct at an accident scene?",["Turn off the ignition or disconnect the battery of the damaged vehicle","Light a cigarette","Block the road with your car","Move the vehicle quickly"],0,"Section 3.6: turn off the ignition or disconnect the battery, secure the vehicle and put out cigarettes."],
+
+  [13,"What is the fine for using a hand-held mobile phone while driving?",["AED 300","AED 800","AED 1,000","AED 3,000"],1,"Violations table (item 32A): AED 800, 4 black points."],
+  [13,"What is the fine for jumping a red signal in a light vehicle?",["AED 300","AED 600","AED 1,000","AED 3,000"],2,"Violations table (item 33A): AED 1,000, 12 black points."],
+  [13,"What is the fine for exceeding the speed limit by more than 80 km/h?",["AED 1,000","AED 2,000","AED 3,000","AED 5,000"],2,"Violations table (item 34): AED 3,000, 23 black points, 60-day suspension."],
+  [13,"What is the fine for a driver who does not fasten a seat belt?",["AED 100","AED 400","AED 800","AED 1,500"],1,"Violations table (item 51A): AED 400, 4 black points."],
+  [13,"What is the fine for allowing a child under 10 years old to sit in the front seat?",["AED 100","AED 300","AED 400","AED 1,000"],2,"Violations table (item 49): AED 400."],
+  [13,"What is the fine for exceeding the speed limit by not more than 20 km/h?",["AED 300","AED 600","AED 1,000","AED 1,500"],0,"Violations table (item 40): AED 300."],
+  [13,"What is the fine for a driver who fails to stop when a school bus STOP sign is activated?",["AED 400","AED 500","AED 1,000","AED 3,000"],2,"Violations table (item 91): AED 1,000, 10 black points and 90-day suspension."],
+  [13,"What is the fine for driving a vehicle without a number plate?",["AED 500","AED 1,000","AED 2,000","AED 3,000"],3,"Violations table (item 4): AED 3,000, 23 black points."]
+];
+
+// All questions: text questions + picture questions (question-images.js)
+const BANK = TEXT_BANK.map(b => ({ t: b[0], q: b[1], o: b[2], a: b[3], e: b[4] })).concat(SHOW_PICTURES ? IMG_BANK : []);
+
+/* ============================================================
+   HELPERS
+   ============================================================ */
+const app = document.getElementById('app');
+let cfg = { topic: 'all', count: '20', shuffle: true, instant: true };
+let S = null;           // current session
+let view = 'home';
+let ticker = null;
+
+function esc(s){
+  return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+function shuffleArr(a){
+  for (let i = a.length - 1; i > 0; i--){
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+function loadHistory(){
+  try { return JSON.parse(localStorage.getItem(HIST_KEY) || '[]'); } catch(e){ return []; }
+}
+function saveHistory(h){
+  try { localStorage.setItem(HIST_KEY, JSON.stringify(h)); } catch(e){}
+}
+function fmtTime(ms){
+  const s = Math.floor(ms / 1000);
+  const m = Math.floor(s / 60), r = s % 60;
+  return String(m).padStart(2,'0') + ':' + String(r).padStart(2,'0');
+}
+function fmtDate(iso){
+  try { return new Date(iso).toLocaleString(); } catch(e){ return iso; }
+}
+function stopTicker(){ if (ticker){ clearInterval(ticker); ticker = null; } }
+function startTicker(){
+  stopTicker();
+  ticker = setInterval(() => {
+    const el = document.getElementById('timer');
+    if (el && S) el.textContent = fmtTime(Date.now() - S.started);
+  }, 1000);
+}
+
+/* ============================================================
+   HOME SCREEN
+   ============================================================ */
+function home(){
+  view = 'home';
+  stopTicker();
+  const topicOpts = ['<option value="all">All topics (' + BANK.length + ' questions)</option>']
+    .concat(TOPICS.map((t, i) => {
+      const n = BANK.filter(b => b.t === i).length;
+      return `<option value="${i}" ${String(cfg.topic) === String(i) ? 'selected' : ''}>${esc(t)} (${n})</option>`;
+    })).join('');
+  const countOpts = ['10','20','40','all'].map(n =>
+    `<option value="${n}" ${String(cfg.count) === n ? 'selected' : ''}>${n === 'all' ? 'All questions' : n + ' questions'}</option>`
+  ).join('');
+
+  const hist = loadHistory();
+  const histHtml = hist.length ? `
+    <section class="card">
+      <h3>Your recent results</h3>
+      <table>
+        <tr><th>Date</th><th>Topic</th><th>Score</th><th>Result</th></tr>
+        ${hist.slice(-8).reverse().map(h => `
+          <tr><td>${esc(fmtDate(h.date))}</td><td>${esc(h.topic)}</td>
+          <td>${h.correct}/${h.total} (${h.pct}%)</td>
+          <td style="color:${h.pct >= PASS ? 'var(--ok)' : 'var(--bad)'};font-weight:700">${h.pct >= PASS ? 'Pass' : 'Not yet'}</td></tr>`).join('')}
+      </table>
+      <p class="note">Results are stored only in this browser.</p>
+    </section>` : '';
+
+  app.innerHTML = `
+    <section class="card">
+      <h2>Start a practice test</h2>
+      <div class="form">
+        <label>Topic <select id="cfgTopic">${topicOpts}</select></label>
+        <label>Number of questions <select id="cfgCount">${countOpts}</select></label>
+        <label class="chk"><input type="checkbox" id="cfgInstant" ${cfg.instant ? 'checked' : ''}> Show the answer and explanation after each question</label>
+        <label class="chk"><input type="checkbox" id="cfgShuffle" ${cfg.shuffle ? 'checked' : ''}> Shuffle questions and answer options</label>
+        <div><button class="btn primary" onclick="startTest()">Start test</button></div>
+      </div>
+    </section>
+    ${histHtml}
+    <section class="card">
+      <h3>How it works</h3>
+      <p class="muted" style="margin:0">Pick a topic and number of questions, then answer each one. Use <b>Flag</b> to mark questions you want to revisit. Press <b>Finish</b> to see your score, the pass/fail result (practice pass mark ${PASS}%), a topic-by-topic breakdown and a full review with explanations.</p>
+      <p class="note" style="margin-bottom:0">Keyboard: 1–4 to choose an answer, ← / → to move between questions.</p>
+    </section>`;
+}
+
+/* ============================================================
+   START A SESSION
+   ============================================================ */
+function startTest(){
+  cfg.topic = document.getElementById('cfgTopic').value;
+  cfg.count = document.getElementById('cfgCount').value;
+  cfg.instant = document.getElementById('cfgInstant').checked;
+  cfg.shuffle = document.getElementById('cfgShuffle').checked;
+
+  let pool = BANK.map((b, i) => ({ id: i, ...b }));
+  if (cfg.topic !== 'all') pool = pool.filter(x => x.t === Number(cfg.topic));
+  if (cfg.shuffle) shuffleArr(pool);
+
+  const n = cfg.count === 'all' ? pool.length : Math.min(Number(cfg.count), pool.length);
+  const qs = pool.slice(0, n).map(x => {
+    let order = [0,1,2,3].slice(0, x.o.length);
+    if (cfg.shuffle && !x.fixed) shuffleArr(order);
+    return { id: x.id, t: x.t, q: x.q, o: order.map(k => x.o[k]), a: order.indexOf(x.a), e: x.e, img: x.img || null };
+  });
+
+  S = {
+    qs,
+    ans: {},          // index -> chosen option index
+    flag: {},         // index -> true
+    cur: 0,
+    started: Date.now(),
+    instant: cfg.instant,
+    done: false,
+    filter: 'all',
+    label: cfg.topic === 'all' ? 'All topics' : TOPICS[Number(cfg.topic)]
+  };
+  view = 'quiz';
+  renderQuiz();
+  startTicker();
+}
+
+/* ============================================================
+   QUIZ SCREEN
+   ============================================================ */
+function renderQuiz(){
+  const q = S.qs[S.cur];
+  const chosen = S.ans[S.cur];
+  const answered = chosen !== undefined;
+  const locked = S.instant && answered;
+  const answeredCount = Object.keys(S.ans).length;
+  const pct = Math.round((answeredCount / S.qs.length) * 100);
+  const isLast = S.cur === S.qs.length - 1;
+
+  const gridHtml = S.qs.map((x, i) => {
+    const c = ['b'];
+    if (i === S.cur) c.push('cur');
+    if (S.ans[i] !== undefined){
+      if (S.instant) c.push(S.ans[i] === x.a ? 'ok' : 'bad');
+      else c.push('answered');
+    }
+    if (S.flag[i]) c.push('flagged');
+    return `<button class="${c.join(' ')}" onclick="jump(${i})" aria-label="Question ${i+1}">${i+1}</button>`;
+  }).join('');
+
+  const optsHtml = q.o.map((o, i) => {
+    const c = ['opt'];
+    if (chosen === i) c.push('sel');
+    if (locked){
+      if (i === q.a) c.push('correct');
+      else if (chosen === i) c.push('wrong');
+    }
+    return `<button class="${c.join(' ')}" ${locked ? 'disabled' : ''} onclick="pick(${i})"><b>${'ABCD'[i]}</b><span>${esc(o)}</span></button>`;
+  }).join('');
+
+  const expHtml = locked ? `
+    <div class="exp ${chosen === q.a ? 'ok' : 'bad'}">
+      <strong>${chosen === q.a ? 'Correct!' : 'Not quite. The correct answer is ' + 'ABCD'[q.a] + '.'}</strong>
+      ${esc(q.e)}
+    </div>` : '';
+
+  app.innerHTML = `
+    <div class="qhead">
+      <span>Question ${S.cur + 1} of ${S.qs.length} · ${answeredCount} answered</span>
+      <span id="timer">${fmtTime(Date.now() - S.started)}</span>
+    </div>
+    <div class="bar"><span style="width:${pct}%"></span></div>
+
+    <section class="card">
+      <div class="tagrow">
+        <span class="tag">${esc(TOPICS[q.t])}</span>
+        <button class="flag ${S.flag[S.cur] ? 'on' : ''}" onclick="toggleFlag()">⚑ ${S.flag[S.cur] ? 'Flagged for review' : 'Flag for review'}</button>
+      </div>
+      <h2 class="qtext">${esc(q.q)}</h2>
+      ${q.img ? `<img class="qimg" src="${q.img}" alt="Picture for this question">` : ''}
+      <div class="opts">${optsHtml}</div>
+      ${expHtml}
+    </section>
+
+    <div class="row">
+      <button class="btn ghost" onclick="go(-1)" ${S.cur === 0 ? 'disabled' : ''}>← Previous</button>
+      <div class="right">
+        ${isLast ? '' : '<button class="btn" onclick="go(1)">Next →</button>'}
+        <button class="btn primary" onclick="finish()">Finish &amp; mark test</button>
+      </div>
+    </div>
+
+    <section class="card">
+      <h3>Question map</h3>
+      <div class="grid">${gridHtml}</div>
+      <p class="hint">Blue outline = current · grey = answered · green/red = marked right/wrong (practice mode) · amber underline = flagged</p>
+    </section>`;
+}
+
+function pick(i){
+  if (!S || S.done) return;
+  if (S.instant && S.ans[S.cur] !== undefined) return;
+  S.ans[S.cur] = i;
+  renderQuiz();
+}
+function go(d){
+  if (!S) return;
+  S.cur = Math.max(0, Math.min(S.qs.length - 1, S.cur + d));
+  renderQuiz();
+}
+function jump(i){
+  if (!S) return;
+  S.cur = i;
+  renderQuiz();
+}
+function toggleFlag(){
+  if (!S) return;
+  S.flag[S.cur] = !S.flag[S.cur];
+  renderQuiz();
+}
+
+document.addEventListener('keydown', e => {
+  if (view !== 'quiz' || !S || S.done) return;
+  if (e.target && (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT')) return;
+  if (['1','2','3','4'].includes(e.key)){
+    const idx = Number(e.key) - 1;
+    if (idx < S.qs[S.cur].o.length) pick(idx);
+  } else if (e.key === 'ArrowRight'){
+    go(1);
+  } else if (e.key === 'ArrowLeft'){
+    go(-1);
+  }
+});
+
+/* ============================================================
+   FINISH & MARK
+   ============================================================ */
+function finish(){
+  const unanswered = S.qs.length - Object.keys(S.ans).length;
+  if (unanswered > 0 && !confirm(unanswered + ' question(s) are unanswered. Finish the test anyway?')) return;
+  S.done = true;
+  stopTicker();
+  S.elapsed = Date.now() - S.started;
+
+  const correct = S.qs.filter((q, i) => S.ans[i] === q.a).length;
+  const total = S.qs.length;
+  const pct = Math.round((correct / total) * 100);
+
+  const hist = loadHistory();
+  hist.push({ date: new Date().toISOString(), topic: S.label, correct, total, pct });
+  saveHistory(hist.slice(-50));
+
+  S.correct = correct;
+  S.pct = pct;
+  S.unanswered = unanswered;
+  view = 'results';
+  renderResults();
+}
+
+function renderResults(){
+  const pass = S.pct >= PASS;
+  const flagged = Object.keys(S.flag).filter(k => S.flag[k]).length;
+
+  // topic breakdown
+  const byTopic = {};
+  S.qs.forEach((q, i) => {
+    const t = q.t;
+    byTopic[t] = byTopic[t] || { total: 0, correct: 0 };
+    byTopic[t].total++;
+    if (S.ans[i] === q.a) byTopic[t].correct++;
+  });
+  const topicRows = Object.keys(byTopic).map(Number).sort((a,b)=>a-b).map(t => {
+    const r = byTopic[t];
+    const p = Math.round((r.correct / r.total) * 100);
+    return `<tr><td>${esc(TOPICS[t])}</td><td>${r.correct} / ${r.total}</td><td style="color:${p >= PASS ? 'var(--ok)' : 'var(--bad)'};font-weight:700">${p}%</td></tr>`;
+  }).join('');
+
+  // review list
+  const filterFn = {
+    all: () => true,
+    wrong: i => S.ans[i] !== undefined && S.ans[i] !== S.qs[i].a,
+    unanswered: i => S.ans[i] === undefined,
+    flagged: i => !!S.flag[i]
+  }[S.filter];
+  const reviewHtml = S.qs.map((q, i) => {
+    if (!filterFn(i)) return '';
+    const u = S.ans[i];
+    const status = u === undefined ? 'none' : (u === q.a ? 'right' : 'wrong');
+    const yourTxt = u === undefined ? 'No answer' : `${'ABCD'[u]}. ${esc(q.o[u])}`;
+    return `
+      <div class="rev ${status}">
+        <div class="muted">Q${i+1} · ${esc(TOPICS[q.t])}${S.flag[i] ? ' · ⚑ flagged' : ''}</div>
+        <p><b>${esc(q.q)}</b></p>
+        ${q.img ? `<img class="qimg small" src="${q.img}" alt="Picture for this question">` : ''}
+        <p class="ans">Your answer: ${yourTxt}</p>
+        <p class="ans">Correct answer: <b>${'ABCD'[q.a]}. ${esc(q.o[q.a])}</b></p>
+        <p class="note">${esc(q.e)}</p>
+      </div>`;
+  }).join('') || '<p class="muted">Nothing to show for this filter.</p>';
+
+  const btn = f => `<button class="${S.filter === f ? 'on' : ''}" onclick="setFilter('${f}')">${({all:'All',wrong:'Wrong',unanswered:'Unanswered',flagged:'Flagged'})[f]}</button>`;
+
+  app.innerHTML = `
+    <section class="card ${pass ? 'pass' : 'fail'}">
+      <div class="score">
+        <div class="big">${S.pct}%</div>
+        <div>
+          <div>${S.correct} of ${S.qs.length} correct</div>
+          <div class="verdict">${pass ? 'PASS' : 'NOT YET PASSED'}</div>
+          <div class="muted">Practice pass mark: ${PASS}% · Time: ${fmtTime(S.elapsed)} · Unanswered: ${S.unanswered} · Flagged: ${flagged}</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="card">
+      <h3>Results by topic · ${esc(S.label)}</h3>
+      <table>
+        <tr><th>Topic</th><th>Correct</th><th>Score</th></tr>
+        ${topicRows}
+      </table>
+    </section>
+
+    <section class="card">
+      <h3>Review your answers</h3>
+      <div class="filters">${['all','wrong','unanswered','flagged'].map(btn).join('')}</div>
+      ${reviewHtml}
+    </section>
+
+    <div class="row">
+      <button class="btn" onclick="home()">← Back to settings</button>
+      <div class="right">
+        <button class="btn primary" onclick="startTest()">Practise again (same settings)</button>
+      </div>
+    </div>`;
+}
+
+function setFilter(f){
+  if (!S) return;
+  S.filter = f;
+  renderResults();
+}
+
+/* ============================================================
+   BOOT
+   ============================================================ */
+home();
+</script>
+</body>
+</html>
